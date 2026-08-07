@@ -31,6 +31,9 @@ public class Order implements Serializable {
     @OneToMany (mappedBy = "id.order")
     private Set<OrderItem> items = new HashSet<>();
 
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL) //o Order e o Payment vão ter o msm ID, então a classe
+    private Payment payment;                                //principal da relação(Order) precisa ter esse cascade
+
     public Order(){
 
     }
@@ -71,11 +74,21 @@ public class Order implements Serializable {
         return items;
     }
 
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+    }
+
     public void setOrderStatus(OrderStatus orderStatus) {
         if (orderStatus != null) {
             this.orderStatus = orderStatus.getCode();
         }
     }
+
+
 
     @Override
     public boolean equals(Object o) {
