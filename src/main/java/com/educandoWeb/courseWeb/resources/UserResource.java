@@ -1,5 +1,6 @@
 package com.educandoWeb.courseWeb.resources;
 
+import com.educandoWeb.courseWeb.dto.UserDTO;
 import com.educandoWeb.courseWeb.entities.User;
 import com.educandoWeb.courseWeb.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +19,19 @@ public class UserResource {
     private UserService service;
 
     @GetMapping
-    public ResponseEntity<List<User>> findAll() {
-
-        List<User> list = service.findAll();
+    public ResponseEntity<List<UserDTO>> findAll() {
+        List<UserDTO> list = service.findAll()
+                .stream()
+                .map(x -> new UserDTO(x))
+                .toList();
         return ResponseEntity.ok().body(list);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<User> findById(@PathVariable Long id){
+    public ResponseEntity<UserDTO> findById(@PathVariable Long id){
         User obj = service.findById(id);
-        return ResponseEntity.ok().body(obj);
+        UserDTO dto = new UserDTO(obj);
+        return ResponseEntity.ok().body(dto);
     }
 
     @PostMapping
