@@ -1,6 +1,7 @@
 package com.educandoWeb.courseWeb.resources;
 
 import com.educandoWeb.courseWeb.dto.UserDTO;
+import com.educandoWeb.courseWeb.dto.UserInsertDTO;
 import com.educandoWeb.courseWeb.entities.User;
 import com.educandoWeb.courseWeb.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +36,13 @@ public class UserResource {
     }
 
     @PostMapping
-    public ResponseEntity<User> insert(@RequestBody User obj) {
-        obj = service.insert(obj);
+    public ResponseEntity<UserDTO> insert(@RequestBody UserInsertDTO obj) {
+        User entity = insertDtoToEntity(obj);
+        service.insert(entity);
+        UserDTO newDto = new UserDTO(entity);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(obj.getId()).toUri();
-        return ResponseEntity.created(uri).body(obj);
+        return ResponseEntity.created(uri).body(newDto);
     }
 
     @DeleteMapping(value = "/{id}")
@@ -52,5 +55,15 @@ public class UserResource {
     public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User obj){
         obj = service.update(id, obj);
         return ResponseEntity.ok().body(obj);
+    }
+
+    // --- Métodos auxiliares: convertem cada DTO de entrada em User ---
+    private User insertDtoToEntity(UserInsertDTO dto){
+        User entity = new User();
+        entity.setName(dto.getName());
+        entity.setEmail(dto.getEmail());
+        entity.setPhone(dto.getPhone());
+        entity.setPassword(dto.getPassword());
+        return entity;
     }
 }
