@@ -2,6 +2,7 @@ package com.educandoWeb.courseWeb.resources;
 
 import com.educandoWeb.courseWeb.dto.UserDTO;
 import com.educandoWeb.courseWeb.dto.UserInsertDTO;
+import com.educandoWeb.courseWeb.dto.UserUpdateDTO;
 import com.educandoWeb.courseWeb.entities.User;
 import com.educandoWeb.courseWeb.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,9 +53,11 @@ public class UserResource {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User obj){
-        obj = service.update(id, obj);
-        return ResponseEntity.ok().body(obj);
+    public ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody UserUpdateDTO obj){
+        User entity = UpdateDtoToEntity(obj);
+        entity = service.update(id,entity);
+        UserDTO dto = new UserDTO(entity);
+        return ResponseEntity.ok().body(dto);
     }
 
     // --- Métodos auxiliares: convertem cada DTO de entrada em User ---
@@ -64,6 +67,14 @@ public class UserResource {
         entity.setEmail(dto.getEmail());
         entity.setPhone(dto.getPhone());
         entity.setPassword(dto.getPassword());
+        return entity;
+    }
+
+    private User UpdateDtoToEntity(UserUpdateDTO dto){
+        User entity = new User();
+        entity.setName(dto.getName());
+        entity.setEmail(dto.getEmail());
+        entity.setPhone(dto.getPhone());
         return entity;
     }
 }
